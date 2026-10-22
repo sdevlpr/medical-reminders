@@ -1,311 +1,343 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>Add Medicine - MedCare</title>
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Add Medicine - MedCare</title>
-
-<link
-rel="stylesheet"
-href="css/style.css">
-
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 
 <body>
 
-
 <header class="header">
+    <div class="container nav">
 
-<div class="container nav">
+        <div class="logo">
+            💊 MedCare
+        </div>
 
-<a
-href="index.html"
-class="logo">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profiles.html">Profiles</a>
+            <a href="add-medicine.html" class="active">Add Medicine</a>
+            <a href="reminders.html">Reminders</a>
+            <a href="tracking.html">Tracking</a>
+            <a href="caregiver.html">Caregiver</a>
+        </nav>
 
-<span class="logo-icon">
-💊
-</span>
-
-MedCare
-
-</a>
-
-
-<nav class="navigation">
-
-<a href="index.html">
-Home
-</a>
-
-<a href="dashboard.html">
-Dashboard
-</a>
-
-<a href="profiles.html">
-Profiles
-</a>
-
-<a
-href="add-medicine.html"
-class="active">
-
-Medicines
-
-</a>
-
-<a href="reminders.html">
-Reminders
-</a>
-
-<a href="tracking.html">
-Tracking
-</a>
-
-<a href="caregiver.html">
-Caregiver
-</a>
-
-</nav>
-
-</div>
-
+    </div>
 </header>
 
 
-<main>
+<section class="section">
 
-<section class="features">
+    <div class="container">
 
-<div class="container">
+        <div class="section-title">
 
+            <h1>➕ Add Medicine</h1>
 
-<div class="section-heading">
+            <p>
+                Create a medicine reminder for your Kid or Elderly profile.
+            </p>
 
-<span class="section-label">
-MEDICINE MANAGEMENT
-</span>
-
-<h2>
-Add New Medicine
-</h2>
-
-<p>
-Enter medicine details and create a reminder.
-</p>
-
-</div>
+        </div>
 
 
-<div
-style="
-max-width:700px;
-margin:auto;
-background:white;
-padding:35px;
-border:1px solid #e2e8f0;
-border-radius:20px;
-box-shadow:0 15px 40px rgba(15,23,42,0.06);
-">
+        <div class="card">
+
+            <form id="medicine-form">
+
+                <!-- PROFILE -->
+                <div class="form-group">
+
+                    <label for="profile">
+                        👤 Select Profile
+                    </label>
+
+                    <select id="profile" required>
+
+                        <option value="">
+                            Loading Profiles...
+                        </option>
+
+                    </select>
+
+                    <small>
+                        First create a Kid or Elderly profile from the Profiles page.
+                    </small>
+
+                </div>
 
 
-<form id="medicine-form">
+                <!-- MEDICINE NAME -->
+                <div class="form-group">
+
+                    <label for="medicine-name">
+                        💊 Medicine Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="medicine-name"
+                        placeholder="Example: Paracetamol"
+                        required
+                    >
+
+                </div>
 
 
-<label>
-Profile *
-</label>
+                <!-- DOSAGE -->
+                <div class="form-group">
 
-<select
-id="profile"
-required
-style="
-width:100%;
-padding:14px;
-margin:8px 0 20px;
-border:1px solid #e2e8f0;
-border-radius:8px;
-">
+                    <label for="dosage">
+                        💧 Dosage
+                    </label>
 
-<select
-id="profile"
-required>
+                    <input
+                        type="text"
+                        id="dosage"
+                        placeholder="Example: 1 Tablet"
+                        required
+                    >
 
-<option value="">
-Select Profile
-</option>
-
-</select>
+                </div>
 
 
-<label>
-Medicine Name *
-</label>
+                <!-- DATE -->
+                <div class="form-group">
 
-<input
-id="medicine-name"
-type="text"
-placeholder="Example: Paracetamol"
-required
-style="
-width:100%;
-padding:14px;
-margin:8px 0 20px;
-border:1px solid #e2e8f0;
-border-radius:8px;
-">
+                    <label for="medicine-date">
+                        📅 Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="medicine-date"
+                        required
+                    >
+
+                </div>
 
 
-<label>
-Dosage *
-</label>
+                <!-- TIME -->
+                <div class="form-group">
 
-<input
-id="dosage"
-type="text"
-placeholder="Example: 1 Tablet"
-required
-style="
-width:100%;
-padding:14px;
-margin:8px 0 20px;
-border:1px solid #e2e8f0;
-border-radius:8px;
-">
+                    <label for="medicine-time">
+                        ⏰ Reminder Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="medicine-time"
+                        required
+                    >
+
+                </div>
 
 
-<label>
-Medicine Date *
-</label>
+                <!-- FOOD -->
+                <div class="form-group">
 
-<input
-id="medicine-date"
-type="date"
-required
-style="
-width:100%;
-padding:14px;
-margin:8px 0 20px;
-border:1px solid #e2e8f0;
-border-radius:8px;
-">
+                    <label for="food">
+                        🍽️ Food Instruction
+                    </label>
 
+                    <select id="food">
 
-<label>
-Reminder Time *
-</label>
+                        <option value="Anytime">
+                            Anytime
+                        </option>
 
-<input
-id="medicine-time"
-type="time"
-required
-style="
-width:100%;
-padding:14px;
-margin:8px 0 20px;
-border:1px solid #e2e8f0;
-border-radius:8px;
-">
+                        <option value="Before Food">
+                            Before Food
+                        </option>
+
+                        <option value="After Food">
+                            After Food
+                        </option>
+
+                        <option value="With Food">
+                            With Food
+                        </option>
+
+                    </select>
+
+                </div>
 
 
-<label>
-Food Instruction
-</label>
+                <!-- INSTRUCTIONS -->
+                <div class="form-group">
 
-<select
-id="food"
-style="
-width:100%;
-padding:14px;
-margin:8px 0 20px;
-border:1px solid #e2e8f0;
-border-radius:8px;
-">
+                    <label for="instructions">
+                        📝 Instructions
+                    </label>
 
-<option>
-Before Food
-</option>
+                    <textarea
+                        id="instructions"
+                        rows="4"
+                        placeholder="Example: Take with one glass of water."
+                    ></textarea>
 
-<option>
-After Food
-</option>
-
-<option>
-With Food
-</option>
-
-<option>
-Any Time
-</option>
-
-</select>
+                </div>
 
 
-<label>
-Instructions
-</label>
+                <!-- BUTTON -->
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    🔔 Save Medicine & Set Reminder
+                </button>
 
-<textarea
-id="instructions"
-placeholder="Example: Give with water"
-style="
-width:100%;
-height:110px;
-padding:14px;
-margin:8px 0 20px;
-border:1px solid #e2e8f0;
-border-radius:8px;
-resize:vertical;
-"></textarea>
+            </form>
 
+        </div>
 
-<button
-type="submit"
-class="btn btn-primary"
-style="
-border:none;
-cursor:pointer;
-width:100%;
-font-size:16px;
-">
-
-🔔 Save Medicine & Set Reminder
-
-</button>
-
-
-</form>
-
-</div>
-
-</div>
+    </div>
 
 </section>
-
-</main>
 
 
 <footer class="footer">
 
-<div class="footer-bottom">
+    <div class="container">
 
-© 2026 MedCare.
-Medical Reminder System.
+        <p>
+            © 2026 MedCare - Medical Reminder System
+        </p>
 
-</div>
+    </div>
 
 </footer>
 
 
 <script src="js/app.js"></script>
 
-</body>
 
+<script>
+
+/* =========================================
+   LOAD CREATED PROFILES
+========================================= */
+
+function loadProfiles() {
+
+    const profileSelect =
+        document.getElementById("profile");
+
+    if (!profileSelect) return;
+
+
+    let profiles = [];
+
+    try {
+
+        profiles = JSON.parse(
+            localStorage.getItem("medcare_profiles") || "[]"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+        profiles = [];
+
+    }
+
+
+    /* Clear dropdown */
+
+    profileSelect.innerHTML = "";
+
+
+    /* No profiles */
+
+    if (
+        !Array.isArray(profiles) ||
+        profiles.length === 0
+    ) {
+
+        profileSelect.innerHTML = `
+            <option value="">
+                No Profile Found - Create Profile First
+            </option>
+        `;
+
+        return;
+    }
+
+
+    /* Default option */
+
+    profileSelect.innerHTML = `
+        <option value="">
+            Select Profile
+        </option>
+    `;
+
+
+    /* Add profiles */
+
+    profiles.forEach(function(profile) {
+
+        const option =
+            document.createElement("option");
+
+
+        option.value =
+            profile.id || profile.name;
+
+
+        let icon = "👤";
+
+        if (profile.type === "Kid") {
+
+            icon = "👦";
+
+        } else if (profile.type === "Elderly") {
+
+            icon = "👴";
+
+        }
+
+
+        option.textContent =
+            `${icon} ${profile.name} - ${profile.type} (${profile.age})`;
+
+
+        profileSelect.appendChild(option);
+
+    });
+
+
+    console.log(
+        "Profiles loaded:",
+        profiles
+    );
+}
+
+
+/* =========================================
+   RUN AFTER PAGE LOAD
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadProfiles();
+
+    }
+);
+
+</script>
+
+</body>
 </html>
