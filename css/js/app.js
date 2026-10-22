@@ -798,6 +798,53 @@ function updateDashboard() {
 // FORM SUBMIT
 // -----------------------------------------------------
 
+function loadProfilesIntoMedicineForm() {
+
+    const select =
+        document.getElementById("profile");
+
+    if (!select) return;
+
+
+    const profiles =
+        JSON.parse(
+            localStorage.getItem(
+                "medcare_profiles"
+            ) || "[]"
+        );
+
+
+    select.innerHTML = `
+        <option value="">
+            Select Profile
+        </option>
+    `;
+
+
+    profiles.forEach(
+        profile => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                profile.name;
+
+            option.textContent =
+                profile.type === "Kid"
+                ? `👦 ${profile.name} - Kid (${profile.age})`
+                : `👴 ${profile.name} - Elderly (${profile.age})`;
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
 function setupMedicineForm() {
 
     const form =
