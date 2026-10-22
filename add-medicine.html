@@ -1,32 +1,77 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Add Medicine - MedCare</title>
+<meta charset="UTF-8">
 
-    <link rel="stylesheet" href="css/style.css">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Add Medicine - MedCare</title>
+
+<link
+rel="stylesheet"
+href="css/style.css">
+
 </head>
 
+
 <body>
+
 
 <header class="header">
 
 <div class="container nav">
 
-<a href="index.html" class="logo">
-    <span class="logo-icon">💊</span>
-    MedCare
+<a
+href="index.html"
+class="logo">
+
+<span class="logo-icon">
+💊
+</span>
+
+MedCare
+
 </a>
+
 
 <nav class="navigation">
 
-<a href="index.html">Home</a>
-<a href="dashboard.html">Dashboard</a>
-<a href="profiles.html">Profiles</a>
-<a href="add-medicine.html" class="active">Medicines</a>
-<a href="caregiver.html">Caregiver</a>
+<a href="index.html">
+Home
+</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+<a href="profiles.html">
+Profiles
+</a>
+
+<a
+href="add-medicine.html"
+class="active">
+
+Medicines
+
+</a>
+
+<a href="reminders.html">
+Reminders
+</a>
+
+<a href="tracking.html">
+Tracking
+</a>
+
+<a href="caregiver.html">
+Caregiver
+</a>
 
 </nav>
 
@@ -41,91 +86,204 @@
 
 <div class="container">
 
+
 <div class="section-heading">
 
 <span class="section-label">
 MEDICINE MANAGEMENT
 </span>
 
-<h2>Add Medicine</h2>
+<h2>
+Add New Medicine
+</h2>
 
 <p>
-Create a medicine schedule and reminder.
+Enter medicine details and create a reminder.
 </p>
 
 </div>
 
 
-<div style="
+<div
+style="
 max-width:700px;
 margin:auto;
 background:white;
 padding:35px;
 border:1px solid #e2e8f0;
 border-radius:20px;
+box-shadow:0 15px 40px rgba(15,23,42,0.06);
 ">
 
 
-<form>
+<form id="medicine-form">
 
-<label>Profile</label>
 
-<select style="width:100%;padding:14px;margin:8px 0 20px;">
-<option>Select Profile</option>
-<option>Kid</option>
-<option>Elderly</option>
+<label>
+Profile *
+</label>
+
+<select
+id="profile"
+required
+style="
+width:100%;
+padding:14px;
+margin:8px 0 20px;
+border:1px solid #e2e8f0;
+border-radius:8px;
+">
+
+<option value="">
+Select Profile
+</option>
+
+<option value="Kid">
+👦 Kid
+</option>
+
+<option value="Elderly">
+👴 Elderly
+</option>
+
 </select>
 
 
-<label>Medicine Name</label>
+<label>
+Medicine Name *
+</label>
 
 <input
+id="medicine-name"
 type="text"
-placeholder="Enter medicine name"
-style="width:100%;padding:14px;margin:8px 0 20px;border:1px solid #e2e8f0;border-radius:8px;"
->
+placeholder="Example: Paracetamol"
+required
+style="
+width:100%;
+padding:14px;
+margin:8px 0 20px;
+border:1px solid #e2e8f0;
+border-radius:8px;
+">
 
 
-<label>Dosage</label>
+<label>
+Dosage *
+</label>
 
 <input
+id="dosage"
 type="text"
 placeholder="Example: 1 Tablet"
-style="width:100%;padding:14px;margin:8px 0 20px;border:1px solid #e2e8f0;border-radius:8px;"
->
+required
+style="
+width:100%;
+padding:14px;
+margin:8px 0 20px;
+border:1px solid #e2e8f0;
+border-radius:8px;
+">
 
 
-<label>Reminder Time</label>
+<label>
+Medicine Date *
+</label>
 
 <input
+id="medicine-date"
+type="date"
+required
+style="
+width:100%;
+padding:14px;
+margin:8px 0 20px;
+border:1px solid #e2e8f0;
+border-radius:8px;
+">
+
+
+<label>
+Reminder Time *
+</label>
+
+<input
+id="medicine-time"
 type="time"
-style="width:100%;padding:14px;margin:8px 0 20px;border:1px solid #e2e8f0;border-radius:8px;"
->
+required
+style="
+width:100%;
+padding:14px;
+margin:8px 0 20px;
+border:1px solid #e2e8f0;
+border-radius:8px;
+">
 
 
-<label>Food Instruction</label>
+<label>
+Food Instruction
+</label>
 
-<select style="width:100%;padding:14px;margin:8px 0 20px;">
-<option>Before Food</option>
-<option>After Food</option>
-<option>With Food</option>
-<option>Any Time</option>
+<select
+id="food"
+style="
+width:100%;
+padding:14px;
+margin:8px 0 20px;
+border:1px solid #e2e8f0;
+border-radius:8px;
+">
+
+<option>
+Before Food
+</option>
+
+<option>
+After Food
+</option>
+
+<option>
+With Food
+</option>
+
+<option>
+Any Time
+</option>
+
 </select>
 
 
-<label>Instructions</label>
+<label>
+Instructions
+</label>
 
 <textarea
-placeholder="Additional instructions"
-style="width:100%;height:100px;padding:14px;margin:8px 0 20px;border:1px solid #e2e8f0;border-radius:8px;"
-></textarea>
+id="instructions"
+placeholder="Example: Give with water"
+style="
+width:100%;
+height:110px;
+padding:14px;
+margin:8px 0 20px;
+border:1px solid #e2e8f0;
+border-radius:8px;
+resize:vertical;
+"></textarea>
 
 
 <button
-type="button"
-class="btn btn-primary">
-Save Medicine
+type="submit"
+class="btn btn-primary"
+style="
+border:none;
+cursor:pointer;
+width:100%;
+font-size:16px;
+">
+
+🔔 Save Medicine & Set Reminder
+
 </button>
+
 
 </form>
 
@@ -141,12 +299,17 @@ Save Medicine
 <footer class="footer">
 
 <div class="footer-bottom">
+
 © 2026 MedCare.
+Medical Reminder System.
+
 </div>
 
 </footer>
 
+
 <script src="js/app.js"></script>
 
 </body>
+
 </html>
