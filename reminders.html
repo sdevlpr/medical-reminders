@@ -1,19 +1,23 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
+<meta
+name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Reminders - MedCare</title>
+<title>Medicine Reminders - MedCare</title>
 
-<link rel="stylesheet"
+<link
+rel="stylesheet"
 href="css/style.css">
 
 </head>
+
 
 <body>
 
@@ -22,10 +26,14 @@ href="css/style.css">
 
 <div class="container nav">
 
-<a href="index.html"
+<a
+href="index.html"
 class="logo">
 
-<span class="logo-icon">💊</span>
+<span class="logo-icon">
+💊
+</span>
+
 MedCare
 
 </a>
@@ -33,7 +41,9 @@ MedCare
 
 <nav class="navigation">
 
-<a href="index.html">Home</a>
+<a href="index.html">
+Home
+</a>
 
 <a href="dashboard.html">
 Dashboard
@@ -47,9 +57,16 @@ Profiles
 Medicines
 </a>
 
-<a href="reminders.html"
+<a
+href="reminders.html"
 class="active">
+
 Reminders
+
+</a>
+
+<a href="tracking.html">
+Tracking
 </a>
 
 <a href="caregiver.html">
@@ -77,45 +94,32 @@ MEDICINE REMINDERS
 </span>
 
 <h2>
-Today's Reminders
+Your Medicine Reminders
 </h2>
 
 <p>
-Your scheduled medicine reminders will appear here.
-</p>
-
-</div>
-
-
-<div class="feature-grid">
-
-<div class="feature-card">
-
-<div class="feature-icon">
-⏰
-</div>
-
-<h3>
-No Reminders
-</h3>
-
-<p>
-You don't have any medicine reminders
-scheduled yet.
+All scheduled medicines and their current status.
 </p>
 
 <br>
 
-<a href="add-medicine.html"
+<button
+onclick="requestNotificationPermission()"
 class="btn btn-primary">
 
-+ Add Medicine
+🔔 Enable Notifications
 
-</a>
+</button>
+
+</div>
+
+
+<div
+id="medicine-list"
+class="feature-grid">
 
 </div>
 
-</div>
 
 </div>
 
@@ -127,7 +131,9 @@ class="btn btn-primary">
 <footer class="footer">
 
 <div class="footer-bottom">
+
 © 2026 MedCare.
+
 </div>
 
 </footer>
