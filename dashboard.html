@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MedCare</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="container nav">
+
+        <a href="index.html" class="logo">
+            <span class="logo-icon">💊</span>
+            <span>MedCare</span>
+        </a>
+
+        <nav class="navigation">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="profiles.html">Profiles</a>
+            <a href="add-medicine.html">Medicines</a>
+            <a href="caregiver.html">Caregiver</a>
+        </nav>
+
+        <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+
+    </div>
+</header>
+
+
+<main>
+
+<section class="features">
+
+<div class="container">
+
+<div class="section-heading">
+    <span class="section-label">MEDCARE DASHBOARD</span>
+    <h2>Good Morning 👋</h2>
+    <p>Manage today's medicines and family health reminders.</p>
+</div>
+
+
+<div class="feature-grid">
+
+    <div class="feature-card">
+        <div class="feature-icon">💊</div>
+        <h3>Today's Medicines</h3>
+        <p>0 medicines scheduled today.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <h3>Medicines Taken</h3>
+        <p>0 medicines marked as taken.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">⏰</div>
+        <h3>Upcoming Reminder</h3>
+        <p>No upcoming reminder.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">🚨</div>
+        <h3>Missed Medicines</h3>
+        <p>0 missed medicines.</p>
+    </div>
+
+</div>
+
+
+<div style="margin-top:50px;text-align:center;">
+
+    <a href="add-medicine.html" class="btn btn-primary">
+        + Add Medicine
+    </a>
+
+    <a href="profiles.html" class="btn btn-secondary">
+        👤 Manage Profiles
+    </a>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<footer class="footer">
+
+<div class="footer-bottom">
+    © 2026 MedCare. Medical Reminder System.
+</div>
+
+</footer>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
