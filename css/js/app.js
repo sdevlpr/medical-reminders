@@ -1,140 +1,297 @@
-/* =====================================================
-   MEDCARE - MEDICINE REMINDER SYSTEM
-===================================================== */
-
-const STORAGE_KEY = "medcare_medicines";
-const TAKEN_KEY = "medcare_tracking";
+/* =========================================================
+   MEDCARE - MAIN APP.JS
+   ========================================================= */
 
 
-// -----------------------------------------------------
-// GET DATA
-// -----------------------------------------------------
+/* =========================================================
+   STORAGE
+========================================================= */
+
+const MEDICINE_KEY = "medcare_medicines";
+const TRACKING_KEY = "medcare_tracking";
+const PROFILE_KEY = "medcare_profiles";
+
 
 function getMedicines() {
-    return JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || "[]"
-    );
+
+    try {
+        return JSON.parse(
+            localStorage.getItem(MEDICINE_KEY) || "[]"
+        );
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+
 }
 
 
 function saveMedicines(medicines) {
+
     localStorage.setItem(
-        STORAGE_KEY,
+        MEDICINE_KEY,
         JSON.stringify(medicines)
     );
+
 }
 
 
 function getTracking() {
-    return JSON.parse(
-        localStorage.getItem(TAKEN_KEY) || "[]"
-    );
+
+    try {
+        return JSON.parse(
+            localStorage.getItem(TRACKING_KEY) || "[]"
+        );
+    } catch (error) {
+        return [];
+    }
+
 }
 
 
 function saveTracking(data) {
+
     localStorage.setItem(
-        TAKEN_KEY,
+        TRACKING_KEY,
         JSON.stringify(data)
     );
+
 }
 
 
-// -----------------------------------------------------
-// NOTIFICATION PERMISSION
-// -----------------------------------------------------
+function getProfiles() {
 
-async function requestNotificationPermission() {
+    try {
+
+        return JSON.parse(
+            localStorage.getItem(PROFILE_KEY) || "[]"
+        );
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+/* =========================================================
+   DATE HELPERS
+========================================================= */
+
+function getToday() {
+
+    const now = new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(now.getMonth() + 1)
+        .padStart(2, "0");
+
+    const day =
+        String(now.getDate())
+        .padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+function formatDate(dateString) {
+
+    if (!dateString) return "";
+
+    const date =
+        new Date(dateString + "T00:00:00");
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   NOTIFICATION PERMISSION
+========================================================= */
+
+async function enableNotifications() {
 
     if (!("Notification" in window)) {
+
         alert(
-            "Your browser does not support notifications."
+            "❌ Your browser does not support notifications."
         );
+
         return;
-    }
-
-    if (Notification.permission === "default") {
-
-        await Notification.requestPermission();
 
     }
 
-    if (Notification.permission === "granted") {
 
-        showBrowserNotification(
-            "MedCare Notifications Enabled",
-            "You will receive medicine reminders here."
+    try {
+
+        const permission =
+            await Notification.requestPermission();
+
+
+        if (permission === "granted") {
+
+            new Notification(
+                "💊 MedCare Notifications Enabled",
+                {
+                    body:
+                        "You will receive medicine reminders here."
+                }
+            );
+
+            alert(
+                "✅ Notifications enabled successfully!"
+            );
+
+        }
+
+        else if (permission === "denied") {
+
+            alert(
+                "❌ Notifications are blocked.\n\n" +
+                "Please allow Notifications from your browser site settings."
+            );
+
+        }
+
+        else {
+
+            alert(
+                "⚠️ Notification permission was not granted."
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Notification error:",
+            error
         );
 
     }
+
 }
 
 
-// -----------------------------------------------------
-// BROWSER NOTIFICATION
-// -----------------------------------------------------
+/* =========================================================
+   SEND NOTIFICATION
+========================================================= */
 
-function showBrowserNotification(title, body) {
+function sendNotification(
+    title,
+    message
+) {
 
-    if (
-        !("Notification" in window) ||
-        Notification.permission !== "granted"
-    ) {
-        return;
+    if (!("Notification" in window)) {
+        return false;
     }
 
-    const notification =
-        new Notification(title, {
-            body: body,
-            icon: "https://cdn-icons-png.flaticon.com/512/2966/2966486.png",
-            badge: "https://cdn-icons-png.flaticon.com/512/2966/2966486.png"
-        });
 
-    notification.onclick = function () {
+    if (Notification.permission !== "granted") {
+        return false;
+    }
 
-        window.focus();
 
-        window.location.href =
-            "reminders.html";
+    try {
 
-    };
+        const notification =
+            new Notification(
+                title,
+                {
+                    body: message,
+                    icon: "https://cdn-icons-png.flaticon.com/512/822/822143.png",
+                    tag: "medcare-reminder"
+                }
+            );
+
+
+        notification.onclick =
+            function() {
+
+                window.focus();
+
+                window.location.href =
+                    "reminders.html";
+
+            };
+
+
+        playReminderSound();
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Notification failed:",
+            error
+        );
+
+        return false;
+
+    }
+
 }
 
 
-// -----------------------------------------------------
-// REMINDER SOUND
-// -----------------------------------------------------
+/* =========================================================
+   REMINDER SOUND
+========================================================= */
 
 function playReminderSound() {
 
     try {
 
-        const audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+        if (!AudioContext) return;
+
+        const context =
+            new AudioContext();
 
         const oscillator =
-            audioContext.createOscillator();
+            context.createOscillator();
 
         const gain =
-            audioContext.createGain();
+            context.createGain();
 
         oscillator.connect(gain);
-        gain.connect(audioContext.destination);
 
-        oscillator.frequency.value = 800;
+        gain.connect(
+            context.destination
+        );
+
+        oscillator.frequency.value =
+            800;
+
+        oscillator.type =
+            "sine";
 
         gain.gain.setValueAtTime(
-            0.2,
-            audioContext.currentTime
+            0.15,
+            context.currentTime
         );
 
         oscillator.start();
 
         oscillator.stop(
-            audioContext.currentTime + 0.7
+            context.currentTime + 0.4
         );
 
     } catch (error) {
@@ -144,707 +301,14 @@ function playReminderSound() {
         );
 
     }
+
 }
 
 
-// -----------------------------------------------------
-// TODAY DATE
-// -----------------------------------------------------
+/* =========================================================
+   MEDICINE FORM
+========================================================= */
 
-function getToday() {
-
-    const date = new Date();
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-
-// -----------------------------------------------------
-// CREATE MEDICINE
-// -----------------------------------------------------
-
-function addMedicine(medicine) {
-
-    const medicines =
-        getMedicines();
-
-    medicine.id =
-        Date.now().toString();
-
-    medicine.createdAt =
-        new Date().toISOString();
-
-    medicine.status =
-        "Pending";
-
-    medicine.lastReminder =
-        null;
-
-    medicines.push(medicine);
-
-    saveMedicines(medicines);
-
-    return medicine;
-}
-
-
-// -----------------------------------------------------
-// DELETE MEDICINE
-// -----------------------------------------------------
-
-function deleteMedicine(id) {
-
-    let medicines =
-        getMedicines();
-
-    medicines =
-        medicines.filter(
-            medicine =>
-                medicine.id !== id
-        );
-
-    saveMedicines(medicines);
-
-    renderMedicines();
-    updateDashboard();
-}
-
-
-// -----------------------------------------------------
-// TAKEN
-// -----------------------------------------------------
-
-function markTaken(id) {
-
-    const medicines =
-        getMedicines();
-
-    const medicine =
-        medicines.find(
-            item =>
-                item.id === id
-        );
-
-    if (!medicine) return;
-
-    medicine.status =
-        "Taken";
-
-    medicine.takenAt =
-        new Date().toISOString();
-
-    saveMedicines(medicines);
-
-
-    const tracking =
-        getTracking();
-
-    tracking.push({
-
-        id:
-            Date.now().toString(),
-
-        medicineId:
-            medicine.id,
-
-        medicineName:
-            medicine.name,
-
-        profile:
-            medicine.profile,
-
-        status:
-            "Taken",
-
-        time:
-            new Date().toISOString()
-
-    });
-
-    saveTracking(tracking);
-
-    renderMedicines();
-    updateDashboard();
-}
-
-
-// -----------------------------------------------------
-// MISSED
-// -----------------------------------------------------
-
-function markMissed(id) {
-
-    const medicines =
-        getMedicines();
-
-    const medicine =
-        medicines.find(
-            item =>
-                item.id === id
-        );
-
-    if (!medicine) return;
-
-    medicine.status =
-        "Missed";
-
-    medicine.missedAt =
-        new Date().toISOString();
-
-    saveMedicines(medicines);
-
-
-    const tracking =
-        getTracking();
-
-    tracking.push({
-
-        id:
-            Date.now().toString(),
-
-        medicineId:
-            medicine.id,
-
-        medicineName:
-            medicine.name,
-
-        profile:
-            medicine.profile,
-
-        status:
-            "Missed",
-
-        time:
-            new Date().toISOString()
-
-    });
-
-    saveTracking(tracking);
-
-
-    playReminderSound();
-
-    showBrowserNotification(
-        "🚨 Medicine Missed",
-        `${medicine.name} was not taken on time.`
-    );
-
-    renderMedicines();
-    updateDashboard();
-}
-
-
-// -----------------------------------------------------
-// SNOOZE
-// -----------------------------------------------------
-
-function snoozeMedicine(id) {
-
-    const medicines =
-        getMedicines();
-
-    const medicine =
-        medicines.find(
-            item =>
-                item.id === id
-        );
-
-    if (!medicine) return;
-
-    medicine.snoozeUntil =
-        Date.now() +
-        (10 * 60 * 1000);
-
-    medicine.status =
-        "Snoozed";
-
-    saveMedicines(medicines);
-
-    alert(
-        "Reminder snoozed for 10 minutes."
-    );
-
-    renderMedicines();
-}
-
-
-// -----------------------------------------------------
-// REMINDER CHECK
-// -----------------------------------------------------
-
-function checkReminders() {
-
-    const medicines =
-        getMedicines();
-
-    const now =
-        new Date();
-
-    const today =
-        getToday();
-
-    medicines.forEach(
-        medicine => {
-
-            if (!medicine.date) {
-                return;
-            }
-
-            if (medicine.date !== today) {
-                return;
-            }
-
-            if (
-                medicine.status ===
-                "Taken"
-            ) {
-                return;
-            }
-
-
-            const reminderDate =
-                new Date(
-                    `${medicine.date}T${medicine.time}`
-                );
-
-
-            const difference =
-                now.getTime() -
-                reminderDate.getTime();
-
-
-            /*
-              Reminder window:
-              0 to 5 minutes after scheduled time
-            */
-
-            if (
-                difference >= 0 &&
-                difference <= 5 * 60 * 1000
-            ) {
-
-                const reminderKey =
-                    `${medicine.id}-${today}-${medicine.time}`;
-
-                if (
-                    medicine.lastReminder !==
-                    reminderKey
-                ) {
-
-                    medicine.lastReminder =
-                        reminderKey;
-
-                    saveMedicines(
-                        medicines
-                    );
-
-
-                    playReminderSound();
-
-
-                    showBrowserNotification(
-                        "💊 Medicine Reminder",
-                        `${medicine.name} - ${medicine.dosage} is due now.`
-                    );
-
-
-                    renderMedicines();
-
-                }
-
-            }
-
-
-            /*
-              Check missed after 15 minutes
-            */
-
-            if (
-                difference >
-                15 * 60 * 1000 &&
-                medicine.status ===
-                "Pending"
-            ) {
-
-                markMissed(
-                    medicine.id
-                );
-
-            }
-
-        }
-    );
-}
-
-
-// -----------------------------------------------------
-// RENDER REMINDERS
-// -----------------------------------------------------
-
-function renderMedicines() {
-
-    const container =
-        document.getElementById(
-            "medicine-list"
-        );
-
-    if (!container) {
-        return;
-    }
-
-
-    const medicines =
-        getMedicines();
-
-
-    if (medicines.length === 0) {
-
-        container.innerHTML = `
-
-            <div class="feature-card">
-
-                <div class="feature-icon">
-                    💊
-                </div>
-
-                <h3>
-                    No Medicines Added
-                </h3>
-
-                <p>
-                    Add your first medicine
-                    to create a reminder.
-                </p>
-
-                <br>
-
-                <a
-                    href="add-medicine.html"
-                    class="btn btn-primary">
-
-                    + Add Medicine
-
-                </a>
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        medicines.map(
-            medicine => `
-
-            <div class="feature-card medicine-item">
-
-                <div class="feature-icon">
-                    💊
-                </div>
-
-                <h3>
-                    ${medicine.name}
-                </h3>
-
-                <p>
-                    <strong>
-                        Profile:
-                    </strong>
-                    ${medicine.profile}
-                </p>
-
-                <p>
-                    <strong>
-                        Dosage:
-                    </strong>
-                    ${medicine.dosage}
-                </p>
-
-                <p>
-                    <strong>
-                        Time:
-                    </strong>
-                    ${medicine.time}
-                </p>
-
-                <p>
-                    <strong>
-                        Food:
-                    </strong>
-                    ${medicine.food}
-                </p>
-
-                <p>
-                    <strong>
-                        Status:
-                    </strong>
-
-                    <span class="medicine-status">
-                        ${medicine.status || "Pending"}
-                    </span>
-
-                </p>
-
-                <br>
-
-                <button
-                    class="btn btn-primary"
-                    onclick="markTaken('${medicine.id}')">
-
-                    ✓ Taken
-
-                </button>
-
-                <button
-                    class="btn btn-secondary"
-                    onclick="snoozeMedicine('${medicine.id}')">
-
-                    ⏰ Snooze
-
-                </button>
-
-                <button
-                    class="btn btn-secondary"
-                    onclick="editMedicine('${medicine.id}')">
-
-                    ✏️ Edit
-
-                </button>
-
-                <button
-                    class="btn btn-secondary"
-                    onclick="deleteMedicine('${medicine.id}')">
-
-                    🗑️ Delete
-
-                </button>
-
-            </div>
-
-        `
-        ).join("");
-}
-
-
-// -----------------------------------------------------
-// EDIT MEDICINE
-// -----------------------------------------------------
-
-function editMedicine(id) {
-
-    const medicines =
-        getMedicines();
-
-    const medicine =
-        medicines.find(
-            item =>
-                item.id === id
-        );
-
-    if (!medicine) return;
-
-
-    const name =
-        prompt(
-            "Medicine Name:",
-            medicine.name
-        );
-
-    if (!name) return;
-
-
-    const dosage =
-        prompt(
-            "Dosage:",
-            medicine.dosage
-        );
-
-    if (!dosage) return;
-
-
-    const time =
-        prompt(
-            "Reminder Time (HH:MM):",
-            medicine.time
-        );
-
-    if (!time) return;
-
-
-    medicine.name =
-        name;
-
-    medicine.dosage =
-        dosage;
-
-    medicine.time =
-        time;
-
-    medicine.status =
-        "Pending";
-
-    medicine.lastReminder =
-        null;
-
-
-    saveMedicines(
-        medicines
-    );
-
-    renderMedicines();
-
-    alert(
-        "Medicine updated successfully."
-    );
-}
-
-
-// -----------------------------------------------------
-// DASHBOARD
-// -----------------------------------------------------
-
-function updateDashboard() {
-
-    const medicines =
-        getMedicines();
-
-    const today =
-        getToday();
-
-    const todayMedicines =
-        medicines.filter(
-            medicine =>
-                medicine.date === today
-        );
-
-
-    const taken =
-        todayMedicines.filter(
-            medicine =>
-                medicine.status === "Taken"
-        ).length;
-
-
-    const missed =
-        todayMedicines.filter(
-            medicine =>
-                medicine.status === "Missed"
-        ).length;
-
-
-    const pending =
-        todayMedicines.filter(
-            medicine =>
-                medicine.status ===
-                "Pending"
-        ).length;
-
-
-    const totalElement =
-        document.getElementById(
-            "today-count"
-        );
-
-    const takenElement =
-        document.getElementById(
-            "taken-count"
-        );
-
-    const missedElement =
-        document.getElementById(
-            "missed-count"
-        );
-
-    const pendingElement =
-        document.getElementById(
-            "pending-count"
-        );
-
-
-    if (totalElement)
-        totalElement.textContent =
-            todayMedicines.length;
-
-    if (takenElement)
-        takenElement.textContent =
-            taken;
-
-    if (missedElement)
-        missedElement.textContent =
-            missed;
-
-    if (pendingElement)
-        pendingElement.textContent =
-            pending;
-}
-
-
-// -----------------------------------------------------
-// FORM SUBMIT
-// -----------------------------------------------------
-
-function loadProfilesIntoMedicineForm() {
-
-    const select =
-        document.getElementById("profile");
-
-    if (!select) return;
-
-
-    const profiles =
-        JSON.parse(
-            localStorage.getItem(
-                "medcare_profiles"
-            ) || "[]"
-        );
-
-
-    select.innerHTML = `
-        <option value="">
-            Select Profile
-        </option>
-    `;
-
-
-    profiles.forEach(
-        profile => {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                profile.name;
-
-            option.textContent =
-                profile.type === "Kid"
-                ? `👦 ${profile.name} - Kid (${profile.age})`
-                : `👴 ${profile.name} - Elderly (${profile.age})`;
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-}
 function setupMedicineForm() {
 
     const form =
@@ -867,40 +331,46 @@ function setupMedicineForm() {
                     "profile"
                 ).value;
 
-            const name =
+
+            const medicineName =
                 document.getElementById(
                     "medicine-name"
                 ).value.trim();
+
 
             const dosage =
                 document.getElementById(
                     "dosage"
                 ).value.trim();
 
+
             const date =
                 document.getElementById(
                     "medicine-date"
                 ).value;
+
 
             const time =
                 document.getElementById(
                     "medicine-time"
                 ).value;
 
+
             const food =
                 document.getElementById(
                     "food"
-                ).value;
+                )?.value || "Anytime";
+
 
             const instructions =
                 document.getElementById(
                     "instructions"
-                ).value.trim();
+                )?.value.trim() || "";
 
 
             if (
                 !profile ||
-                !name ||
+                !medicineName ||
                 !dosage ||
                 !date ||
                 !time
@@ -915,13 +385,20 @@ function setupMedicineForm() {
             }
 
 
-            addMedicine({
+            const medicines =
+                getMedicines();
+
+
+            const medicine = {
+
+                id:
+                    Date.now().toString(),
 
                 profile:
                     profile,
 
                 name:
-                    name,
+                    medicineName,
 
                 dosage:
                     dosage,
@@ -936,70 +413,1221 @@ function setupMedicineForm() {
                     food,
 
                 instructions:
-                    instructions
+                    instructions,
 
-            });
+                status:
+                    "Pending",
+
+                lastReminder:
+                    "",
+
+                snoozeUntil:
+                    "",
+
+                createdAt:
+                    new Date().toISOString()
+
+            };
 
 
-            /*
-              Ask notification permission
-            */
-
-            requestNotificationPermission();
-
-
-            alert(
-                "✅ Medicine added successfully!"
+            medicines.push(
+                medicine
             );
 
 
-            form.reset();
+            saveMedicines(
+                medicines
+            );
 
 
-            /*
-              Go to reminders
-            */
+            /* Ask notification permission */
 
-            setTimeout(
-                function() {
+            if (
+                "Notification" in window &&
+                Notification.permission === "default"
+            ) {
 
-                    window.location.href =
-                        "reminders.html";
+                Notification.requestPermission();
 
-                },
-                500
+            }
+
+
+            alert(
+                "✅ Medicine saved successfully!"
+            );
+
+
+            window.location.href =
+                "reminders.html";
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   UPCOMING REMINDERS
+========================================================= */
+
+function renderMedicines() {
+
+    const container =
+        document.getElementById(
+            "medicine-list"
+        );
+
+    if (!container) return;
+
+
+    const medicines =
+        getMedicines();
+
+
+    if (
+        !medicines ||
+        medicines.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="card"
+                 style="
+                 grid-column:1/-1;
+                 text-align:center;
+                 padding:40px;
+                 ">
+
+                <div style="font-size:50px;">
+                    💊
+                </div>
+
+                <h2>
+                    No Upcoming Reminders
+                </h2>
+
+                <p>
+                    Add a medicine to create your first reminder.
+                </p>
+
+                <a
+                    href="add-medicine.html"
+                    class="btn btn-primary"
+                >
+                    ➕ Add Medicine
+                </a>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* Sort by date + time */
+
+    medicines.sort(
+        function(a, b) {
+
+            const dateA =
+                new Date(
+                    `${a.date}T${a.time}`
+                );
+
+            const dateB =
+                new Date(
+                    `${b.date}T${b.time}`
+                );
+
+            return dateA - dateB;
+
+        }
+    );
+
+
+    container.innerHTML = "";
+
+
+    medicines.forEach(
+        function(medicine) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "card";
+
+
+            card.style.position =
+                "relative";
+
+
+            let statusClass =
+                "pending";
+
+
+            if (
+                medicine.status ===
+                "Taken"
+            ) {
+
+                statusClass =
+                    "taken";
+
+            }
+
+
+            if (
+                medicine.status ===
+                "Missed"
+            ) {
+
+                statusClass =
+                    "missed";
+
+            }
+
+
+            card.innerHTML = `
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:flex-start;
+                    gap:15px;
+                    margin-bottom:18px;
+                ">
+
+                    <div>
+
+                        <div style="
+                            font-size:30px;
+                            margin-bottom:8px;
+                        ">
+                            💊
+                        </div>
+
+                        <h3 style="
+                            margin:0 0 5px;
+                        ">
+                            ${escapeHTML(
+                                medicine.name
+                            )}
+                        </h3>
+
+                        <p style="
+                            margin:0;
+                            color:#667;
+                        ">
+                            ${escapeHTML(
+                                medicine.dosage
+                            )}
+                        </p>
+
+                    </div>
+
+
+                    <span style="
+                        padding:6px 12px;
+                        border-radius:20px;
+                        background:
+                        ${
+                            medicine.status === "Taken"
+                            ? "#e8f8ee"
+                            :
+                            medicine.status === "Missed"
+                            ? "#fdecec"
+                            :
+                            "#fff7df"
+                        };
+                        color:
+                        ${
+                            medicine.status === "Taken"
+                            ? "#25804a"
+                            :
+                            medicine.status === "Missed"
+                            ? "#c0392b"
+                            :
+                            "#9a7200"
+                        };
+                        font-size:12px;
+                        font-weight:700;
+                    ">
+                        ${medicine.status}
+                    </span>
+
+                </div>
+
+
+                <div style="
+                    display:grid;
+                    gap:8px;
+                    margin-bottom:18px;
+                ">
+
+                    <div>
+                        👤
+                        <strong>Profile:</strong>
+                        ${escapeHTML(
+                            getProfileDisplayName(
+                                medicine.profile
+                            )
+                        )}
+                    </div>
+
+                    <div>
+                        📅
+                        <strong>Date:</strong>
+                        ${formatDate(
+                            medicine.date
+                        )}
+                    </div>
+
+                    <div>
+                        ⏰
+                        <strong>Time:</strong>
+                        ${medicine.time}
+                    </div>
+
+                    <div>
+                        🍽️
+                        <strong>Food:</strong>
+                        ${escapeHTML(
+                            medicine.food ||
+                            "Anytime"
+                        )}
+                    </div>
+
+                </div>
+
+
+                ${
+                    medicine.instructions
+                    ?
+                    `
+                    <div style="
+                        background:#f6f9fa;
+                        padding:12px;
+                        border-radius:10px;
+                        margin-bottom:15px;
+                        font-size:13px;
+                    ">
+                        📝
+                        ${escapeHTML(
+                            medicine.instructions
+                        )}
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
+
+                <div style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    gap:8px;
+                ">
+
+                    <button
+                        onclick="markTaken('${medicine.id}')"
+                        class="btn btn-primary"
+                        style="border:none;cursor:pointer;"
+                    >
+                        ✅ Taken
+                    </button>
+
+                    <button
+                        onclick="snoozeMedicine('${medicine.id}')"
+                        class="btn"
+                        style="
+                            border:none;
+                            cursor:pointer;
+                            background:#fff4dc;
+                        "
+                    >
+                        ⏰ Snooze 10 Min
+                    </button>
+
+                    <button
+                        onclick="editMedicine('${medicine.id}')"
+                        class="btn"
+                        style="
+                            border:none;
+                            cursor:pointer;
+                            background:#edf5ff;
+                        "
+                    >
+                        ✏️ Edit
+                    </button>
+
+                    <button
+                        onclick="deleteMedicine('${medicine.id}')"
+                        class="btn"
+                        style="
+                            border:none;
+                            cursor:pointer;
+                            background:#fdecec;
+                        "
+                    >
+                        🗑️ Delete
+                    </button>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                card
             );
 
         }
     );
+
 }
 
 
-// -----------------------------------------------------
-// START APP
-// -----------------------------------------------------
+/* =========================================================
+   PROFILE DISPLAY
+========================================================= */
+
+function getProfileDisplayName(
+    profileValue
+) {
+
+    const profiles =
+        getProfiles();
+
+
+    const profile =
+        profiles.find(
+            function(item) {
+
+                return (
+                    String(item.id) ===
+                    String(profileValue)
+                    ||
+                    item.name ===
+                    profileValue
+                );
+
+            }
+        );
+
+
+    if (!profile) {
+
+        return profileValue || "Unknown";
+
+    }
+
+
+    return (
+        profile.name +
+        " - " +
+        profile.type +
+        " (" +
+        profile.age +
+        ")"
+    );
+
+}
+
+
+/* =========================================================
+   MARK TAKEN
+========================================================= */
+
+function markTaken(
+    medicineId
+) {
+
+    const medicines =
+        getMedicines();
+
+
+    const medicine =
+        medicines.find(
+            item =>
+                String(item.id) ===
+                String(medicineId)
+        );
+
+
+    if (!medicine) return;
+
+
+    medicine.status =
+        "Taken";
+
+
+    medicine.takenAt =
+        new Date().toISOString();
+
+
+    saveMedicines(
+        medicines
+    );
+
+
+    const tracking =
+        getTracking();
+
+
+    tracking.push({
+
+        medicineId:
+            medicine.id,
+
+        medicineName:
+            medicine.name,
+
+        profile:
+            medicine.profile,
+
+        status:
+            "Taken",
+
+        date:
+            getToday(),
+
+        time:
+            new Date().toLocaleTimeString()
+
+    });
+
+
+    saveTracking(
+        tracking
+    );
+
+
+    renderMedicines();
+
+}
+
+
+/* =========================================================
+   MARK MISSED
+========================================================= */
+
+function markMissed(
+    medicine
+) {
+
+    medicine.status =
+        "Missed";
+
+
+    const medicines =
+        getMedicines();
+
+
+    saveMedicines(
+        medicines
+    );
+
+
+    const tracking =
+        getTracking();
+
+
+    tracking.push({
+
+        medicineId:
+            medicine.id,
+
+        medicineName:
+            medicine.name,
+
+        profile:
+            medicine.profile,
+
+        status:
+            "Missed",
+
+        date:
+            getToday(),
+
+        time:
+            new Date().toLocaleTimeString()
+
+    });
+
+
+    saveTracking(
+        tracking
+    );
+
+
+    sendNotification(
+
+        "🚨 Medicine Missed",
+
+        `${medicine.name} was not taken on time.`
+
+    );
+
+}
+
+
+/* =========================================================
+   SNOOZE
+========================================================= */
+
+function snoozeMedicine(
+    medicineId
+) {
+
+    const medicines =
+        getMedicines();
+
+
+    const medicine =
+        medicines.find(
+            item =>
+                String(item.id) ===
+                String(medicineId)
+        );
+
+
+    if (!medicine) return;
+
+
+    const snoozeTime =
+        new Date(
+            Date.now() +
+            10 * 60 * 1000
+        );
+
+
+    medicine.snoozeUntil =
+        snoozeTime.toISOString();
+
+
+    medicine.status =
+        "Pending";
+
+
+    saveMedicines(
+        medicines
+    );
+
+
+    alert(
+        "⏰ Reminder snoozed for 10 minutes."
+    );
+
+
+    renderMedicines();
+
+}
+
+
+/* =========================================================
+   DELETE MEDICINE
+========================================================= */
+
+function deleteMedicine(
+    medicineId
+) {
+
+    if (
+        !confirm(
+            "Are you sure you want to delete this medicine?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    let medicines =
+        getMedicines();
+
+
+    medicines =
+        medicines.filter(
+            item =>
+                String(item.id) !==
+                String(medicineId)
+        );
+
+
+    saveMedicines(
+        medicines
+    );
+
+
+    renderMedicines();
+
+}
+
+
+/* =========================================================
+   EDIT MEDICINE
+========================================================= */
+
+function editMedicine(
+    medicineId
+) {
+
+    const medicines =
+        getMedicines();
+
+
+    const medicine =
+        medicines.find(
+            item =>
+                String(item.id) ===
+                String(medicineId)
+        );
+
+
+    if (!medicine) return;
+
+
+    const newName =
+        prompt(
+            "Medicine Name:",
+            medicine.name
+        );
+
+
+    if (
+        newName === null ||
+        !newName.trim()
+    ) {
+
+        return;
+
+    }
+
+
+    const newDosage =
+        prompt(
+            "Dosage:",
+            medicine.dosage
+        );
+
+
+    if (
+        newDosage === null ||
+        !newDosage.trim()
+    ) {
+
+        return;
+
+    }
+
+
+    const newTime =
+        prompt(
+            "Reminder Time (HH:MM):",
+            medicine.time
+        );
+
+
+    if (
+        newTime === null ||
+        !newTime.trim()
+    ) {
+
+        return;
+
+    }
+
+
+    medicine.name =
+        newName.trim();
+
+
+    medicine.dosage =
+        newDosage.trim();
+
+
+    medicine.time =
+        newTime.trim();
+
+
+    saveMedicines(
+        medicines
+    );
+
+
+    renderMedicines();
+
+}
+
+
+/* =========================================================
+   REMINDER CHECKER
+========================================================= */
+
+function checkReminders() {
+
+    const medicines =
+        getMedicines();
+
+
+    if (!medicines.length) {
+        return;
+    }
+
+
+    const now =
+        new Date();
+
+
+    const today =
+        getToday();
+
+
+    let changed =
+        false;
+
+
+    medicines.forEach(
+        function(medicine) {
+
+            if (
+                medicine.date !==
+                today
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                medicine.status ===
+                "Taken"
+            ) {
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+               SNOOZED REMINDER
+            ----------------------------------------- */
+
+            if (
+                medicine.snoozeUntil
+            ) {
+
+                const snoozeDate =
+                    new Date(
+                        medicine.snoozeUntil
+                    );
+
+
+                if (
+                    now >= snoozeDate
+                ) {
+
+                    sendNotification(
+
+                        "💊 Medicine Reminder",
+
+                        `${medicine.name} - ${medicine.dosage} is due now.`
+
+                    );
+
+
+                    medicine.snoozeUntil =
+                        "";
+
+
+                    medicine.lastReminder =
+                        now.toISOString();
+
+
+                    changed =
+                        true;
+
+                }
+
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+               NORMAL REMINDER
+            ----------------------------------------- */
+
+            const reminderDate =
+                new Date(
+                    `${medicine.date}T${medicine.time}`
+                );
+
+
+            const difference =
+                now - reminderDate;
+
+
+            /* Reminder window:
+               0 to 15 minutes after scheduled time
+            */
+
+            if (
+                difference >= 0 &&
+                difference <= 15 * 60 * 1000
+            ) {
+
+                const lastReminder =
+                    medicine.lastReminder
+                    ?
+                    new Date(
+                        medicine.lastReminder
+                    )
+                    :
+                    null;
+
+
+                const canNotify =
+                    !lastReminder ||
+                    (
+                        now -
+                        lastReminder
+                        >
+                        10 * 60 * 1000
+                    );
+
+
+                if (canNotify) {
+
+                    sendNotification(
+
+                        "💊 Medicine Reminder",
+
+                        `${medicine.name} - ${medicine.dosage} is due now.`
+
+                    );
+
+
+                    medicine.lastReminder =
+                        now.toISOString();
+
+
+                    changed =
+                        true;
+
+                }
+
+            }
+
+
+            /* -----------------------------------------
+               MISSED AFTER 15 MINUTES
+            ----------------------------------------- */
+
+            if (
+                difference >
+                15 * 60 * 1000 &&
+                medicine.status ===
+                "Pending"
+            ) {
+
+                markMissed(
+                    medicine
+                );
+
+
+                changed =
+                    true;
+
+            }
+
+        }
+    );
+
+
+    if (changed) {
+
+        saveMedicines(
+            medicines
+        );
+
+        renderMedicines();
+
+    }
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard() {
+
+    const medicines =
+        getMedicines();
+
+
+    const today =
+        getToday();
+
+
+    const todayMedicines =
+        medicines.filter(
+            medicine =>
+                medicine.date ===
+                today
+        );
+
+
+    const total =
+        document.getElementById(
+            "total-medicines"
+        );
+
+
+    const pending =
+        document.getElementById(
+            "pending-medicines"
+        );
+
+
+    const taken =
+        document.getElementById(
+            "taken-medicines"
+        );
+
+
+    const missed =
+        document.getElementById(
+            "missed-medicines"
+        );
+
+
+    if (total) {
+
+        total.textContent =
+            todayMedicines.length;
+
+    }
+
+
+    if (pending) {
+
+        pending.textContent =
+            todayMedicines.filter(
+                item =>
+                    item.status ===
+                    "Pending"
+            ).length;
+
+    }
+
+
+    if (taken) {
+
+        taken.textContent =
+            todayMedicines.filter(
+                item =>
+                    item.status ===
+                    "Taken"
+            ).length;
+
+    }
+
+
+    if (missed) {
+
+        missed.textContent =
+            todayMedicines.filter(
+                item =>
+                    item.status ===
+                    "Missed"
+            ).length;
+
+    }
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+    if (value === undefined ||
+        value === null) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   ENABLE NOTIFICATION BUTTON
+========================================================= */
+
+function setupNotificationButton() {
+
+    const buttons =
+        document.querySelectorAll(
+            "#enable-notifications, .enable-notifications"
+        );
+
+
+    buttons.forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                enableNotifications
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LOAD PROFILES INTO ADD MEDICINE
+========================================================= */
+
+function loadProfilesIntoMedicineForm() {
+
+    const select =
+        document.getElementById(
+            "profile"
+        );
+
+
+    if (!select) return;
+
+
+    const profiles =
+        getProfiles();
+
+
+    select.innerHTML = `
+        <option value="">
+            Select Profile
+        </option>
+    `;
+
+
+    profiles.forEach(
+        function(profile) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                profile.id ||
+                profile.name;
+
+
+            const icon =
+                profile.type === "Kid"
+                ? "👦"
+                : "👴";
+
+
+            option.textContent =
+                `${icon} ${profile.name} - ${profile.type} (${profile.age})`;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if (!profiles.length) {
+
+        select.innerHTML = `
+            <option value="">
+                No Profile Found - Create Profile First
+            </option>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   PAGE START
+========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
         setupMedicineForm();
-       
-       loadProfilesIntoMedicineForm();
+
+        loadProfilesIntoMedicineForm();
 
         renderMedicines();
 
         updateDashboard();
 
+        setupNotificationButton();
+
         checkReminders();
 
 
-        /*
-          Check every 10 seconds
-        */
+        /* Check every 10 seconds */
 
         setInterval(
-            checkReminders,
+            function() {
+
+                checkReminders();
+
+                updateDashboard();
+
+            },
             10000
         );
 
