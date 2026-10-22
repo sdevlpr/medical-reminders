@@ -984,6 +984,8 @@ document.addEventListener(
     function() {
 
         setupMedicineForm();
+       
+       loadProfilesIntoMedicineForm();
 
         renderMedicines();
 
