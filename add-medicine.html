@@ -1,17 +1,389 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Add Medicine - MedCare</title>
+    <title>Add Medicine | MedCare</title>
 
     <link rel="stylesheet" href="css/style.css">
+
+    <style>
+
+        /* ================================
+           ADD MEDICINE PAGE
+        ================================= */
+
+        .medicine-page {
+            min-height: calc(100vh - 80px);
+            padding: 55px 20px 70px;
+            background:
+                linear-gradient(135deg, #f4fbff 0%, #eef8f5 100%);
+        }
+
+        .medicine-wrapper {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        /* TOP HEADER */
+
+        .medicine-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .medicine-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: white;
+            border-radius: 22px;
+
+            font-size: 34px;
+
+            box-shadow:
+                0 12px 35px rgba(30, 100, 120, 0.12);
+        }
+
+        .medicine-heading h1 {
+            margin: 0;
+            font-size: 34px;
+            font-weight: 800;
+            color: #163b4d;
+        }
+
+        .medicine-heading p {
+            margin-top: 10px;
+            color: #6d7f88;
+            font-size: 16px;
+        }
+
+        /* MAIN CARD */
+
+        .medicine-card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 38px;
+
+            box-shadow:
+                0 20px 55px rgba(35, 80, 100, 0.12);
+
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        /* CARD TITLE */
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            margin-bottom: 30px;
+            padding-bottom: 22px;
+
+            border-bottom: 1px solid #edf1f3;
+        }
+
+        .form-header-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 15px;
+
+            background: #e9f8f4;
+
+            font-size: 23px;
+        }
+
+        .form-header h2 {
+            margin: 0;
+            color: #173f50;
+            font-size: 21px;
+        }
+
+        .form-header p {
+            margin: 4px 0 0;
+            color: #7c8d94;
+            font-size: 13px;
+        }
+
+        /* FORM GRID */
+
+        .medicine-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 9px;
+
+            color: #284b59;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required {
+            color: #e45858;
+        }
+
+        /* INPUTS */
+
+        .input-box {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .medicine-form input,
+        .medicine-form select,
+        .medicine-form textarea {
+
+            width: 100%;
+            box-sizing: border-box;
+
+            border: 1.5px solid #dfe8eb;
+            border-radius: 13px;
+
+            background: #fbfdfe;
+
+            padding: 14px 15px;
+
+            color: #263f49;
+            font-size: 15px;
+
+            outline: none;
+
+            transition: all 0.2s ease;
+        }
+
+        .input-box input,
+        .input-box select {
+            padding-left: 48px;
+        }
+
+        .medicine-form input:focus,
+        .medicine-form select:focus,
+        .medicine-form textarea:focus {
+
+            border-color: #4aa89a;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 4px rgba(74, 168, 154, 0.10);
+        }
+
+        .medicine-form textarea {
+            resize: vertical;
+            min-height: 115px;
+        }
+
+        .help-text {
+            margin-top: 7px;
+
+            color: #84949b;
+            font-size: 12px;
+        }
+
+        /* PROFILE SPECIAL BOX */
+
+        .profile-box {
+            background: linear-gradient(
+                135deg,
+                #f1fbf8,
+                #f5fbff
+            );
+
+            border: 1px solid #dcefeb;
+
+            padding: 18px;
+            border-radius: 16px;
+        }
+
+        .profile-box label {
+            color: #245b58;
+        }
+
+        /* BOTTOM INFO */
+
+        .medicine-info {
+            grid-column: 1 / -1;
+
+            display: flex;
+            gap: 15px;
+
+            padding: 17px 19px;
+
+            background: #f7fafb;
+            border-radius: 15px;
+
+            border: 1px solid #e8eef0;
+        }
+
+        .medicine-info-icon {
+            font-size: 21px;
+        }
+
+        .medicine-info p {
+            margin: 0;
+
+            color: #687d85;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* BUTTON AREA */
+
+        .form-actions {
+            grid-column: 1 / -1;
+
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+
+            margin-top: 5px;
+        }
+
+        .btn-save {
+            border: none;
+
+            padding: 15px 27px;
+
+            border-radius: 13px;
+
+            background: linear-gradient(
+                135deg,
+                #3d9f91,
+                #267e77
+            );
+
+            color: white;
+
+            font-size: 15px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 9px 22px rgba(48, 139, 128, 0.22);
+
+            transition: 0.2s ease;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 13px 28px rgba(48, 139, 128, 0.28);
+        }
+
+        .btn-back {
+            padding: 15px 23px;
+
+            border-radius: 13px;
+
+            background: #f2f6f7;
+
+            color: #45606a;
+
+            text-decoration: none;
+
+            font-size: 15px;
+            font-weight: 600;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back:hover {
+            background: #e8eff1;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 750px) {
+
+            .medicine-page {
+                padding: 35px 14px 50px;
+            }
+
+            .medicine-heading h1 {
+                font-size: 28px;
+            }
+
+            .medicine-card {
+                padding: 23px 18px;
+                border-radius: 21px;
+            }
+
+            .medicine-form {
+                grid-template-columns: 1fr;
+                gap: 19px;
+            }
+
+            .full-width,
+            .medicine-info,
+            .form-actions {
+                grid-column: 1;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .btn-save,
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+                box-sizing: border-box;
+            }
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
+
+<!-- ================================
+     HEADER
+================================= -->
+
 <header class="header">
+
     <div class="container nav">
 
         <div class="logo">
@@ -19,179 +391,354 @@
         </div>
 
         <nav>
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="profiles.html">Profiles</a>
-            <a href="add-medicine.html" class="active">Add Medicine</a>
-            <a href="reminders.html">Reminders</a>
-            <a href="tracking.html">Tracking</a>
-            <a href="caregiver.html">Caregiver</a>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="profiles.html">
+                Profiles
+            </a>
+
+            <a href="add-medicine.html" class="active">
+                Add Medicine
+            </a>
+
+            <a href="reminders.html">
+                Reminders
+            </a>
+
+            <a href="tracking.html">
+                Tracking
+            </a>
+
+            <a href="caregiver.html">
+                Caregiver
+            </a>
+
         </nav>
 
     </div>
+
 </header>
 
 
-<section class="section">
 
-    <div class="container">
+<!-- ================================
+     MAIN
+================================= -->
 
-        <div class="section-title">
+<main class="medicine-page">
 
-            <h1>➕ Add Medicine</h1>
+    <div class="medicine-wrapper">
+
+
+        <!-- PAGE HEADING -->
+
+        <div class="medicine-heading">
+
+            <div class="medicine-icon">
+                💊
+            </div>
+
+            <h1>
+                Add New Medicine
+            </h1>
 
             <p>
-                Create a medicine reminder for your Kid or Elderly profile.
+                Set up a personalized medicine reminder in a few simple steps.
             </p>
 
         </div>
 
 
-        <div class="card">
 
-            <form id="medicine-form">
+        <!-- FORM CARD -->
 
-                <!-- PROFILE -->
-                <div class="form-group">
+        <div class="medicine-card">
 
-                    <label for="profile">
-                        👤 Select Profile
-                    </label>
 
-                    <select id="profile" required>
+            <!-- FORM HEADER -->
 
-                        <option value="">
-                            Loading Profiles...
-                        </option>
+            <div class="form-header">
 
-                    </select>
+                <div class="form-header-icon">
+                    📋
+                </div>
 
-                    <small>
-                        First create a Kid or Elderly profile from the Profiles page.
-                    </small>
+                <div>
+
+                    <h2>
+                        Medicine Details
+                    </h2>
+
+                    <p>
+                        Enter the medicine and reminder information below.
+                    </p>
 
                 </div>
+
+            </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                id="medicine-form"
+                class="medicine-form"
+            >
+
+
+                <!-- PROFILE -->
+
+                <div class="form-group full-width profile-box">
+
+                    <label for="profile">
+                        👤 Select Patient Profile
+                        <span class="required">*</span>
+                    </label>
+
+                    <div class="input-box">
+
+                        <span class="input-icon">
+                            👤
+                        </span>
+
+                        <select
+                            id="profile"
+                            required
+                        >
+
+                            <option value="">
+                                Loading Profiles...
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="help-text">
+                        Select the Kid or Elderly person who will take this medicine.
+                    </div>
+
+                </div>
+
 
 
                 <!-- MEDICINE NAME -->
+
                 <div class="form-group">
 
                     <label for="medicine-name">
-                        💊 Medicine Name
+                        Medicine Name
+                        <span class="required">*</span>
                     </label>
 
-                    <input
-                        type="text"
-                        id="medicine-name"
-                        placeholder="Example: Paracetamol"
-                        required
-                    >
+                    <div class="input-box">
+
+                        <span class="input-icon">
+                            💊
+                        </span>
+
+                        <input
+                            type="text"
+                            id="medicine-name"
+                            placeholder="e.g. Paracetamol"
+                            required
+                        >
+
+                    </div>
 
                 </div>
+
 
 
                 <!-- DOSAGE -->
+
                 <div class="form-group">
 
                     <label for="dosage">
-                        💧 Dosage
+                        Dosage
+                        <span class="required">*</span>
                     </label>
 
-                    <input
-                        type="text"
-                        id="dosage"
-                        placeholder="Example: 1 Tablet"
-                        required
-                    >
+                    <div class="input-box">
+
+                        <span class="input-icon">
+                            💧
+                        </span>
+
+                        <input
+                            type="text"
+                            id="dosage"
+                            placeholder="e.g. 1 Tablet"
+                            required
+                        >
+
+                    </div>
 
                 </div>
+
 
 
                 <!-- DATE -->
+
                 <div class="form-group">
 
                     <label for="medicine-date">
-                        📅 Date
+                        Reminder Date
+                        <span class="required">*</span>
                     </label>
 
-                    <input
-                        type="date"
-                        id="medicine-date"
-                        required
-                    >
+                    <div class="input-box">
+
+                        <span class="input-icon">
+                            📅
+                        </span>
+
+                        <input
+                            type="date"
+                            id="medicine-date"
+                            required
+                        >
+
+                    </div>
 
                 </div>
+
 
 
                 <!-- TIME -->
+
                 <div class="form-group">
 
                     <label for="medicine-time">
-                        ⏰ Reminder Time
+                        Reminder Time
+                        <span class="required">*</span>
                     </label>
 
-                    <input
-                        type="time"
-                        id="medicine-time"
-                        required
-                    >
+                    <div class="input-box">
+
+                        <span class="input-icon">
+                            ⏰
+                        </span>
+
+                        <input
+                            type="time"
+                            id="medicine-time"
+                            required
+                        >
+
+                    </div>
 
                 </div>
+
 
 
                 <!-- FOOD -->
+
                 <div class="form-group">
 
                     <label for="food">
-                        🍽️ Food Instruction
+                        Food Instruction
                     </label>
 
-                    <select id="food">
+                    <div class="input-box">
 
-                        <option value="Anytime">
-                            Anytime
-                        </option>
+                        <span class="input-icon">
+                            🍽️
+                        </span>
 
-                        <option value="Before Food">
-                            Before Food
-                        </option>
+                        <select id="food">
 
-                        <option value="After Food">
-                            After Food
-                        </option>
+                            <option value="Anytime">
+                                Anytime
+                            </option>
 
-                        <option value="With Food">
-                            With Food
-                        </option>
+                            <option value="Before Food">
+                                Before Food
+                            </option>
 
-                    </select>
+                            <option value="After Food">
+                                After Food
+                            </option>
+
+                            <option value="With Food">
+                                With Food
+                            </option>
+
+                        </select>
+
+                    </div>
 
                 </div>
 
 
+
                 <!-- INSTRUCTIONS -->
-                <div class="form-group">
+
+                <div class="form-group full-width">
 
                     <label for="instructions">
-                        📝 Instructions
+                        Additional Instructions
                     </label>
 
                     <textarea
                         id="instructions"
-                        rows="4"
                         placeholder="Example: Take with one glass of water."
                     ></textarea>
+
+                    <div class="help-text">
+                        Add any special instructions given by the doctor or caregiver.
+                    </div>
 
                 </div>
 
 
-                <!-- BUTTON -->
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
-                    🔔 Save Medicine & Set Reminder
-                </button>
+
+                <!-- INFO -->
+
+                <div class="medicine-info">
+
+                    <div class="medicine-info-icon">
+                        🔔
+                    </div>
+
+                    <p>
+                        After saving, the medicine will appear in your
+                        <strong>Reminders</strong> section. Make sure browser
+                        notifications are enabled so you can receive reminder alerts.
+                    </p>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="form-actions">
+
+                    <a
+                        href="dashboard.html"
+                        class="btn-back"
+                    >
+                        ← Back to Dashboard
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn-save"
+                    >
+                        🔔 Save Medicine & Set Reminder
+                    </button>
+
+                </div>
+
 
             </form>
 
@@ -199,15 +746,20 @@
 
     </div>
 
-</section>
+</main>
 
+
+
+<!-- ================================
+     FOOTER
+================================= -->
 
 <footer class="footer">
 
     <div class="container">
 
         <p>
-            © 2026 MedCare - Medical Reminder System
+            © 2026 MedCare • Medical Reminder System
         </p>
 
     </div>
@@ -215,14 +767,16 @@
 </footer>
 
 
+
+<!-- APP JAVASCRIPT -->
+
 <script src="js/app.js"></script>
 
 
-<script>
 
-/* =========================================
-   LOAD CREATED PROFILES
-========================================= */
+<!-- PROFILE LOADER -->
+
+<script>
 
 function loadProfiles() {
 
@@ -252,12 +806,8 @@ function loadProfiles() {
     }
 
 
-    /* Clear dropdown */
-
     profileSelect.innerHTML = "";
 
-
-    /* No profiles */
 
     if (
         !Array.isArray(profiles) ||
@@ -274,16 +824,12 @@ function loadProfiles() {
     }
 
 
-    /* Default option */
-
     profileSelect.innerHTML = `
         <option value="">
             Select Profile
         </option>
     `;
 
-
-    /* Add profiles */
 
     profiles.forEach(function(profile) {
 
@@ -297,11 +843,15 @@ function loadProfiles() {
 
         let icon = "👤";
 
+
         if (profile.type === "Kid") {
 
             icon = "👦";
 
-        } else if (profile.type === "Elderly") {
+        }
+
+
+        if (profile.type === "Elderly") {
 
             icon = "👴";
 
@@ -316,17 +866,8 @@ function loadProfiles() {
 
     });
 
-
-    console.log(
-        "Profiles loaded:",
-        profiles
-    );
 }
 
-
-/* =========================================
-   RUN AFTER PAGE LOAD
-========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -339,5 +880,8 @@ document.addEventListener(
 
 </script>
 
+
 </body>
+
 </html>
+```
